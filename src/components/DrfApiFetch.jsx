@@ -30,7 +30,7 @@ export const DrfApiFetch = () => {
       });
   };
 
-  const deleteTask = () => {
+  const deleteTask = (id) => {
     axios
       .delete(`http://127.0.0.1:8000/api/tasks/${id}/`, {
         headers: {
@@ -38,7 +38,8 @@ export const DrfApiFetch = () => {
         },
       })
       .then((res) => {
-        setTasks(res.data);
+        setTasks(tasks.filter((task) => task.id !== id));
+        setSelectedTask([]);
       });
   };
 
@@ -47,7 +48,10 @@ export const DrfApiFetch = () => {
       <ul>
         {tasks.map((task) => (
           <li key={task.id}>
-            {task.title} {task.id}{" "}
+            {task.title} {task.id}
+            <button onClick={() => deleteTask(task.id)}>
+              <i className="fas fa-trash-alt"></i>
+            </button>
           </li>
         ))}
       </ul>
@@ -63,9 +67,9 @@ export const DrfApiFetch = () => {
       <button type="button" onClick={() => getTask()}>
         Get task
       </button>
-      <button type="button" onClick={() => deleteTask()}>
+      {/* <button type="button" onClick={() => deleteTask()}>
         Delete
-      </button>
+      </button> */}
       <h3>
         {selectedTask.title}
         {selectedTask.id}
