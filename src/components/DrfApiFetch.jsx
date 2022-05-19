@@ -4,6 +4,7 @@ import axios from "axios";
 export const DrfApiFetch = () => {
   const [tasks, setTasks] = useState([]);
   const [selectedTask, setSelectedTask] = useState([]);
+  const [editedTask, setEditedTask] = useState({ id: "", title: "" });
   const [id, setId] = useState(1);
 
   useEffect(() => {
@@ -43,6 +44,29 @@ export const DrfApiFetch = () => {
       });
   };
 
+  const newTask = (task) => {
+    const data = {
+      title: task.title,
+    };
+    axios
+      .post(`http://127.0.0.1:8000/api/tasks/`, data, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Token 80354b461d950032f7bb80feadd24b8d7869645f",
+        },
+      })
+      .then((res) => {
+        setTasks([...tasks, res.data]);
+        setEditedTask({ id: "", title: "" });
+      });
+  };
+
+  const handleInputChange = (evt) => {
+    const value = evt.target.value;
+    const name = evt.target.name;
+    setEditedTask({ ...editedTask, [name]: value });
+  };
+
   return (
     <div>
       <ul>
@@ -74,6 +98,19 @@ export const DrfApiFetch = () => {
         {selectedTask.title}
         {selectedTask.id}
       </h3>
+      <input
+        type="text"
+        name="title"
+        value={editedTask.title}
+        onChange={(evt) => handleInputChange(evt)}
+        placeholder="New task ?"
+        required
+      />
+      {editedTask.id ? (
+        <button onClick={() => editTask(editedTask)}>Update</button>
+      ) : (
+        <button onClick={() => newTask(editedTask)}>Create</button>
+      )}
     </div>
   );
 };
